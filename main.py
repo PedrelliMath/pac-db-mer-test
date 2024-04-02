@@ -79,8 +79,62 @@ def db_book_register(livro: Livro):
                 print(f"Sucesso ao inserir o livro {livro.titulo}")
             except sqlite3.IntegrityError as e:
                 print(f"Erro de integridade ao inserir os dados: {e}")
+            except sqlite3.OperationalError as e:
+                print(f"Os parametros de insercao sao invalidos: {e}")
     except sqlite3.Error as e:
         print(f"Falha ao conectar com o banco: {e}")
+
+def db_all_books_query():
+
+    print(f'Buscando todos os livros no banco...\n')
+
+    sql_all_books_query = """
+        SELECT Livro.codigo_livro, Livro.titulo, Livro.edicao, Livro.ISBN, Livro.categoria, 
+            Livro.ano_de_publicacao, Editora.nome AS editora, 
+            Livro.quantidade_exemplares, GROUP_CONCAT(Autor.nome) AS autores
+        FROM Livro
+        INNER JOIN Editora ON Livro.id_editora = Editora.id
+        LEFT JOIN LivroAutor ON Livro.codigo_livro = LivroAutor.codigo_livro
+        LEFT JOIN Autor ON LivroAutor.id_autor = Autor.id
+        GROUP BY Livro.codigo_livro;
+    """
+    try:
+        with sqlite3.connect(database_file_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(sql_all_books_query)
+                return cursor.fetchall()
+            except sqlite3.OperationalError as e:
+                print(f'Os parametros da consulta sao invalidos: {e}')
+    except sqlite3.Error as e:
+        print(f"Falha ao conectar com o banco: {e}")
+
+def db_book_by_title_query(book_title: str):
+
+    print(f'Buscando livro {book_title}')
+
+    sql_book_by_title_query = """
+        SELECT Livro.codigo_livro, Livro.titulo, Livro.edicao, Livro.ISBN, Livro.categoria, 
+            Livro.ano_de_publicacao, Editora.nome AS editora, 
+            Livro.quantidade_exemplares, GROUP_CONCAT(Autor.nome) AS autores
+        FROM Livro
+        INNER JOIN Editora ON Livro.id_editora = Editora.id
+        LEFT JOIN LivroAutor ON Livro.codigo_livro = LivroAutor.codigo_livro
+        LEFT JOIN Autor ON LivroAutor.id_autor = Autor.id
+        WHERE Livro.titulo = ?
+        GROUP BY Livro.codigo_livro;
+    """
+    try:
+        with sqlite3.connect(database_file_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(sql_book_by_title_query, (book_title,))
+                return cursor.fetchall()
+            except sqlite3.OperationalError as e:
+                print(f'Os parametros da consulta sao invalidos: {e}')
+    except sqlite3.Error as e:
+        print(f"Falha ao conectar com o banco: {e}")
+
 
 def db_publisher_register(editora: Editora):
 
@@ -439,6 +493,24 @@ def _book_register():
 
     db_book_register(livro)
 
+def _all_books_search():
+    
+    print('BUSCA DE LIVROS')
+
+    livros = db_all_books_query()
+
+    for livro in livros:
+        print(livro)
+
+def _book_by_title_search(book_title):
+
+    print('BUSCA DE LIVRO POR TITULO')
+
+    livros = db_book_by_title_query(book_title)
+
+    for livro in livros:
+        print(livro)
+
 if __name__=='__main__':
 
     if not os.path.exists(database_file_path):
@@ -458,8 +530,10 @@ if __name__=='__main__':
         else:
             print("Usuario ou senha incorretos")
             continue
-
+    
     _book_register()
+    _all_books_search()
+    _book_by_title_search('matheus')
     
 
 
