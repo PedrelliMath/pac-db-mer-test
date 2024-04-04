@@ -133,7 +133,7 @@ AFTER INSERT ON Exemplar
 BEGIN
     UPDATE Livro
     SET quantidade_exemplares = quantidade_exemplares + 1
-    WHERE id = NEW.codigo_livro;
+    WHERE Livro.codigo_livro = new.codigo_livro;
 END;
 
 INSERT INTO Cadastro (id, logradouro, numero, complemento, bairro, UF, CEP, email, telefone) VALUES
@@ -143,6 +143,9 @@ INSERT INTO Cadastro (id, logradouro, numero, complemento, bairro, UF, CEP, emai
 
 INSERT INTO Funcionario (nome, sobrenome, id_cadastro) VALUES
 ('matheus', 'mauricio', 1);
+
+INSERT INTO Leitor (nome, sobrenome, id_cadastro) VALUES
+('lucas', 'felipe', 2);
 
 INSERT INTO Login (id_cadastro, usuario, senha) VALUES
 (1, 'matheus', '123');

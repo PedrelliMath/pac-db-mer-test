@@ -1,0 +1,2 @@
+class EmprestimoFailure(Exception):
+    pass

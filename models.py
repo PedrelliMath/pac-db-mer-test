@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 
 class SituacaoExemplar(Enum):
@@ -16,13 +16,13 @@ class LivroDB:
         self.id_editora = id_editora
         self.quantidade_exemplares = quantidade_exemplares
     
-    def __init__(self):
+    def __str__(self):
         return( 
-            f'codigo livro: {self.codigo_livro}'
-            + f'titulo: {self.titulo}, edicao: {self.edicao}'
-            + f'ISBN: {self.ISBN}, categoria: {self.categoria}'
-            + f'ano de publicacao: {self.ano_de_publicacao}'
-            + f'id_editora: {self.id_editora}'
+            f'codigo livro: {self.codigo_livro},'
+            + f'titulo: {self.titulo}, edicao: {self.edicao},'
+            + f'ISBN: {self.ISBN}, categoria: {self.categoria},'
+            + f'ano de publicacao: {self.ano_de_publicacao},'
+            + f'id_editora: {self.id_editora},'
             + f'quantidade de exemplares: {self.quantidade_exemplares}'
         )
 
@@ -118,13 +118,20 @@ class Cadastro:
         self.telefone = telefone
 
 class Emprestimo:
+    def __init__(self, id_leitor, data_emprestimo, data_devolucao, id_funcionario):
+        self.id_leitor = id_leitor
+        self.data_emprestimo = data_emprestimo
+        self.data_devolucao = data_devolucao
+        self.id_funcionario = id_funcionario
+
+class EmprestimoDB:
     def __init__(self, id_emprestimo, codigo_exemplar, id_leitor, data_emprestimo, data_devolucao, id_funcionario):
         self.id_emprestimo = id_emprestimo
         self.codigo_exemplar = codigo_exemplar
         self.id_leitor = id_leitor
         self.data_emprestimo = data_emprestimo
         self.data_devolucao = data_devolucao
-        self.id_funcionario = id_funcionario
+        self.id_funcionario = id_funcionario    
 
 class Emprestimo_Exemplar:
     def __init__(self, id_emprestimo, codigo_exemplar):
